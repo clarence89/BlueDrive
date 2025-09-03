@@ -50,7 +50,7 @@ docker-compose up --build
 docker compose up --build
 ```
 
-- Access: [http://localhost:8000](http://localhost:8000)
+- Access: [http://localhost:8000/swagger](http://localhost:8000/swagger)
 - Debug port: `5678` (debugpy)
 
 ---
@@ -72,16 +72,6 @@ docker compose run web python manage.py initial_seed
 ```
 
 > Seeds default users, authors, and posts. You can extend the command to generate 100 posts/comments.
-
----
-
-## Running the Project
-
-For dev (with hot reload and debug):
-
-```bash
-docker-compose up
-```
 
 ---
 
