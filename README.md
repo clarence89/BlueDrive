@@ -39,6 +39,14 @@ SIMPLE_JWT_ACCESS_TOKEN_LIFETIME=5
 SIMPLE_JWT_REFRESH_TOKEN_LIFETIME=1
 ```
 
+Create a virtual environment to eliminated lines in vscode assuming you have python and pip installed:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
 ---
 
 ## Docker
@@ -47,6 +55,7 @@ SIMPLE_JWT_REFRESH_TOKEN_LIFETIME=1
 
 ```bash
 docker-compose up --build
+or
 docker compose up --build
 ```
 
@@ -61,6 +70,7 @@ Apply migrations:
 
 ```bash
 docker-compose run web python manage.py migrate
+or
 docker compose run web python manage.py migrate
 ```
 
@@ -68,10 +78,21 @@ Seed the database:
 
 ```bash
 docker-compose run web python manage.py initial_seed
+or
 docker compose run web python manage.py initial_seed
 ```
 
 > Seeds default users, authors, and posts. You can extend the command to generate 100 posts/comments.
+
+Create Superuser Account (Optional):
+
+```bash
+docker-compose run web python manage.py createsuperuser 
+or
+docker compose run web python manage.py createsuperuser
+```
+
+> Create a Superuser Account.
 
 ---
 
@@ -81,6 +102,8 @@ Run tests with pytest:
 
 ```bash
 docker-compose run web pytest
+or
+docker compose run web pytest
 ```
 
 > Ensure `pytest-django` is installed.
