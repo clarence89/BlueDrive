@@ -64,7 +64,8 @@ def test_post_list_shows_only_active(api_client, post, inactive_post):
     response = api_client.get("/api/posts/")
     assert response.status_code == 200, "Post list API did not return 200 OK"
     data = response.json()
-    post_ids = [p["id"] for p in data]
+    results = data.get("results", data)
+    post_ids = [p["id"] for p in results]
     assert post.id in post_ids, "Active post is missing from the list"
     assert inactive_post.id not in post_ids, "Inactive post should not appear in list"
 
@@ -83,8 +84,9 @@ def test_post_list_filter_by_date(api_client, post, author):
     response = api_client.get(f"/api/posts/?published_date_after={start_date}&published_date_before={end_date}")
     assert response.status_code == 200, "Post list filtering by date failed"
     data = response.json()
-    for p in data:
-        pub_date = datetime.fromisoformat(p["published_date"].replace("Z",""))
+    results = data.get("results", data) 
+    for p in results:
+        pub_date = datetime.fromisoformat(p["published_date"].replace("Z", ""))
         assert start_date <= pub_date.date() <= end_date, f"Post {p['id']} published date not in range"
 
 @pytest.mark.django_db
