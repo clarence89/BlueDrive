@@ -136,6 +136,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication", 
         "rest_framework_simplejwt.authentication.JWTAuthentication", 
     ],
+    'DEFAULT_PAGINATION_CLASS': 'core.pagination.CustomPagination',
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],

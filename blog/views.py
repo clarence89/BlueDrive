@@ -60,7 +60,6 @@ class AuthorDeleteAPI(generics.DestroyAPIView):
 class PostListAPI(generics.ListAPIView):
     queryset = Post.objects.filter(active=True)
     serializer_class = PostListSerializer
-    authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.AllowAny]
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
