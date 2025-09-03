@@ -17,6 +17,8 @@ class AuthorCreateUpdateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get("request")
+        if request is None:
+            raise serializers.ValidationError("Request context is missing")
         return Author.objects.create(user=request.user, **validated_data)
 
 
@@ -41,6 +43,10 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get("request")
+
+        if request is None:
+            raise serializers.ValidationError("Request context is missing")
+        
         user = request.user if request.user.is_authenticated else None
         return Comment.objects.create(user=user, **validated_data)
 
@@ -78,6 +84,9 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
     def validate_author(self, value):
         request = self.context.get("request")
+        if request is None:
+            raise serializers.ValidationError("Request context is missing")
+        
         if value.user != request.user:
             raise serializers.ValidationError("You can only post as your own author profile.")
         return value
@@ -90,6 +99,12 @@ class PostEditSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         request = self.context.get("request")
+        if request is None:
+            raise serializers.ValidationError("Request context is missing")
+        
+        if self.instance is None:
+            raise serializers.ValidationError("Instance is missing")
+        
         if self.instance.author.user != request.user:
             raise serializers.ValidationError("You can only edit your own posts.")
         return data
