@@ -21,6 +21,8 @@ class AuthorListAPI(generics.ListAPIView):
     serializer_class = AuthorSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    search_fields = ['name', 'email']
 
     def get_queryset(self):
         if self.request.user.is_staff:
