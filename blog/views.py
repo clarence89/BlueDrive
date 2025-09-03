@@ -1,4 +1,5 @@
 from rest_framework import generics, permissions
+from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -95,12 +96,11 @@ class PostDeleteAPI(generics.DestroyAPIView):
 
     def perform_destroy(self, instance):
         if instance.author.user != self.request.user:
-            raise permissions.PermissionDenied("You can only delete your own posts.")
+            raise PermissionDenied("You can only delete your own posts.")
         instance.active = False
         instance.save()
 
 
 class CommentCreateAPI(generics.CreateAPIView):
     serializer_class = CommentCreateSerializer
-    authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.AllowAny]

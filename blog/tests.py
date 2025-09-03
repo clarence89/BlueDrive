@@ -132,3 +132,64 @@ def test_create_comment_anonymous(api_client, post):
     assert response.status_code == 201, "Failed to create comment as anonymous user"
     data = response.json()
     assert data["content"] == "Anonymous comment", "Comment content mismatch"
+
+
+
+# My Negative Tests
+
+@pytest.mark.django_db
+def test_create_post_wrong_author(jwt_client, author2):
+    """Attempt to create a post using another user's author profile"""
+    payload = {
+        "title": "Invalid Post",
+        "content": "Test content",
+        "published_date": timezone.now().isoformat(),
+        "author": author2.id 
+    }
+    response = jwt_client.post("/api/posts/create/", payload, format='json')
+    assert response.status_code == 400, "Should not allow creating post with another user's author"
+    data = response.json()
+    assert "author" in data or "non_field_errors" in data, "Expected validation error for author"
+
+@pytest.mark.django_db
+def test_create_post_missing_fields(jwt_client):
+    """Attempt to create a post without required fields"""
+    payload = {}
+    response = jwt_client.post("/api/posts/create/", payload, format='json')
+    assert response.status_code == 400, "Should not allow creating post with missing fields"
+    data = response.json()
+    assert "title" in data and "content" in data, "Expected validation errors for missing title/content"
+
+@pytest.mark.django_db
+def test_create_comment_on_inactive_post(jwt_client, inactive_post):
+    """Attempt to create a comment on an inactive post"""
+    payload = {"post": inactive_post.id, "content": "Comment on inactive post"}
+    response = jwt_client.post("/api/comments/create/", payload, format='json')
+    assert response.status_code == 400, "Should not allow commenting on inactive post"
+    data = response.json()
+    assert "non_field_errors" in data or "detail" in data, "Expected validation error for inactive post"
+
+@pytest.mark.django_db
+def test_edit_post_wrong_user(jwt_client, author2, post):
+    """Attempt to edit another user's post"""
+    payload = {"title": "Hacked Title", "content": "Hacked Content", "active": True}
+    from rest_framework_simplejwt.tokens import RefreshToken
+    from django.contrib.auth.models import User
+
+    user2 = author2.user
+    refresh = RefreshToken.for_user(user2)
+    jwt_client.credentials(HTTP_AUTHORIZATION=f"Bearer {refresh.access_token}")
+    
+    response = jwt_client.put(f"/api/posts/{post.id}/edit/", payload, format='json')
+    assert response.status_code == 400 or response.status_code == 403, "Should not allow editing another user's post"
+
+@pytest.mark.django_db
+def test_delete_post_wrong_user(jwt_client, author2, post):
+    """Attempt to delete another user's post"""
+    from rest_framework_simplejwt.tokens import RefreshToken
+    user2 = author2.user
+    refresh = RefreshToken.for_user(user2)
+    jwt_client.credentials(HTTP_AUTHORIZATION=f"Bearer {refresh.access_token}")
+
+    response = jwt_client.delete(f"/api/posts/{post.id}/delete/")
+    assert response.status_code == 403, "Should not allow deleting another user's post"
