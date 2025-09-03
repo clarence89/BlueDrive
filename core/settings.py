@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-2i4d7a6)83!^j2u3#b4o8aiu+drh68!y9_y$f(t#3b0don^u#n"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -140,4 +141,10 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+}
+
+SIMPLE_JWT = {
+'ACCESS_TOKEN_LIFETIME': os.getenv("SIMPLE_JWT_ACCESS_TOKEN_LIFETIME", timedelta(days=10)),
+'REFRESH_TOKEN_LIFETIME': os.getenv("SIMPLE_JWT_REFRESH_TOKEN_LIFETIME", timedelta(days=20)), 'ROTATE_REFRESH_TOKENS': True, 'BLACKLIST_AFTER_ROTATION': timedelta(days=20),
+
 }
