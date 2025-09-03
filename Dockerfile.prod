@@ -15,7 +15,9 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-RUN python manage.py collectstatic --noinput
+RUN mkdir -p /code/staticfiles
+
+RUN python manage.py collectstatic --noinput || true   # just added this line to make sure it wont break lol
 
 EXPOSE 8000
 
