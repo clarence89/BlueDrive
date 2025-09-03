@@ -1,22 +1,21 @@
+version: "3.9"
+
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     env_file:
       - .env
-    command: >
-      sh -c "python -m debugpy --listen 0.0.0.0:5678 manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - .:/code
     ports:
       - "8000:8000"
-      - "5678:5678"
-      - "5679:5679"
     depends_on:
       - db
+    restart: always
 
   db:
     image: postgres:15
-    container_name: bluedrive_db
+    container_name: blog_db_prod
     restart: always
     environment:
       POSTGRES_DB: ${DATABASE_NAME}
@@ -25,7 +24,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_prod:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+  postgres_data_prod:
