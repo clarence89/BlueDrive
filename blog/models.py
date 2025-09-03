@@ -6,7 +6,12 @@ from django.utils import timezone
 class Author(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
+    # Different Pen Names? if it is then good. if not should be onetoone? i'll stick with the requirements
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Author"
+        verbose_name_plural = "Authors"
 
     def __str__(self):
         return self.name
@@ -26,6 +31,8 @@ class Post(models.Model):
     active = models.BooleanField(default=True)
 
     class Meta:
+        verbose_name = "Post"
+        verbose_name_plural = "Posts"
         ordering = ["-published_date"]
         indexes = [
             models.Index(fields=["status"]),
@@ -44,11 +51,12 @@ class Comment(models.Model):
     created = models.DateTimeField(default=timezone.now)
 
     class Meta:
+        verbose_name = "Comment"
+        verbose_name_plural = "Comments"
         ordering = ["-created"]
         indexes = [
             models.Index(fields=["-created"]),
         ]
 
-
     def __str__(self):
-        return f"Comment by {self.user or 'Anonymous'} on {self.post}"
+        return f"Comment by {self.user or 'Anonymous'} on {self.post.title[:20]}"
