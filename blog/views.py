@@ -3,6 +3,8 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.renderers import JSONRenderer
+
 from .models import Author, Post, Comment
 from .serializers import (
     AuthorSerializer,
@@ -23,6 +25,7 @@ class AuthorListAPI(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ['name', 'email']
+    renderer_classes = [JSONRenderer]
 
     def get_queryset(self):
         if self.request.user.is_staff:
@@ -67,6 +70,7 @@ class PostListAPI(generics.ListAPIView):
     search_fields = ['title', 'content', 'author__name']
     ordering_fields = ['published_date', 'title', 'author__name']
     ordering = ['-published_date']
+    renderer_classes = [JSONRenderer]
 
 
 class PostDetailAPI(generics.RetrieveAPIView):

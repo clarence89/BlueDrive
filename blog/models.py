@@ -5,6 +5,7 @@ from django.utils import timezone
 
 class Author(models.Model):
     name = models.CharField(max_length=100)
+    # Should i make this nullable? as per assessment in CreateApi of Post it should be using author_name and not author_id
     email = models.EmailField(unique=True)
     # Different Pen Names? if it is then good. if not should be onetoone? i'll stick with the requirements
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
