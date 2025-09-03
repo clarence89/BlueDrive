@@ -27,6 +27,11 @@ class Post(models.Model):
 
     class Meta:
         ordering = ["-published_date"]
+        indexes = [
+            models.Index(fields=["status"]),
+            models.Index(fields=["active"]),
+            models.Index(fields=["-published_date"]),
+        ]
 
     def __str__(self):
         return self.title
@@ -40,6 +45,10 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ["-created"]
+        indexes = [
+            models.Index(fields=["-created"]),
+        ]
+
 
     def __str__(self):
         return f"Comment by {self.user or 'Anonymous'} on {self.post}"
